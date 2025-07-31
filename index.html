@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Веб-додаток</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="glowing glowing-1"></div>
+    <div class="glowing glowing-2"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">Σ</div>
+                <span>Квантова аналітика</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Панель інструментів</a></li>
+                    <li><a href="#">Аналітика</a></li>
+                    <li><a href="#">Моделі ML</a></li>
+                    <li><a href="#">Потоки даних</a></li>
+                    <li><a href="#">Налаштування</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Стан системи</h2>
+                    <div class="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                            <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                            <circle cx="12" cy="20" r="1"></circle>
+                        </svg>
+                    </div>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-title">Навантаження на процесор (CPU)</div>
+                        <div class="metric-value" id="cpu-load">24.7%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-title">Використання пам'яті</div>
+                        <div class="metric-value" id="memory-usage">3.2/16GB</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-title">Мережевий ввід-вивід</div>
+                        <div class="metric-value" id="network-io">124 Mbps</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-title">Зберігання</div>
+                        <div class="metric-value" id="storage">1.2/2TB</div>
+                    </div>
+                </div>
+                <div class="status-badge status-online">
+                    <div class="status-indicator"></div>
+                    <span>Всі системи працюють</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Дані в режимі реального часу</h2>
+                    <div class="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="realtimeChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card card-large">
+                <div class="card-header">
+                    <h2 class="card-title">3D-візуалізація даних</h2>
+                    <div class="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon>
+                            <line x1="12" y1="22" x2="12" y2="15.5"></line>
+                            <polyline points="22 8.5 12 15.5 2 8.5"></polyline>
+                            <polyline points="2 15.5 12 8.5 22 15.5"></polyline>
+                            <line x1="12" y1="2" x2="12" y2="8.5"></line>
+                        </svg>
+                    </div>
+                </div>
+                <canvas id="glCanvas"></canvas>
+            </div>
+            
+            <div class="card card-tall">
+                <div class="card-header">
+                    <h2 class="card-title">Моделювання частинок</h2>
+                    <div class="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="12" r="4"></circle>
+                            <line x1="4.93" y1="4.93" x2="9.17" y2="9.17"></line>
+                            <line x1="14.83" y1="14.83" x2="19.07" y2="19.07"></line>
+                            <line x1="14.83" y1="9.17" x2="19.07" y2="4.93"></line>
+                            <line x1="14.83" y1="9.17" x2="18.36" y2="5.64"></line>
+                            <line x1="4.93" y1="19.07" x2="9.17" y2="14.83"></line>
+                        </svg>
+                    </div>
+                </div>
+                <div class="particles-container" id="particles"></div>
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="particle-count">Підрахунок частинок</label>
+                        <input type="range" id="particle-count" min="50" max="1000" value="300">
+                    </div>
+                    <div class="control-group">
+                        <label for="particle-speed">Швидкість</label>
+                        <input type="range" id="particle-speed" min="1" max="10" value="3">
+                    </div>
+                    <div class="control-group">
+                        <label for="particle-size">Розмір</label>
+                        <input type="range" id="particle-size" min="1" max="10" value="3">
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button id="start-simulation">Початок</button>
+                    <button class="secondary" id="reset-simulation">Скинути</button>
+                </div>
+            </div>
+            
+            <div class="card card-full">
+                <div class="card-header">
+                    <h2 class="card-title">Прогнози на основі машинного навчання</h2>
+                    <div class="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path>
+                            <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon>
+                        </svg>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="mlChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            Квантова аналітика v1.0.0 | Розширена візуалізація та штучний інтелект | © 2025
+        </footer>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
